@@ -24,6 +24,7 @@
       <p class="map-hint">下のマップをクリックすると位置が自動入力されます</p>
       <div class="area-map">
         <%= image_tag 'area_map.png', alt: 'エリアマップ', class: 'map-image', id: 'clickable-map' %>
+        <div id="seat-tooltip" class="seat-tooltip"></div>
       </div>
     </div>
 
@@ -130,6 +131,7 @@
     background-color: #ffffff;
     border-radius: 8px;
     border: 1px solid #dee2e6;
+    position: relative;
   }
 
   .map-image {
@@ -150,6 +152,24 @@
     color: #6c757d;
     margin: 8px 0 0;
   }
+
+  .seat-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    pointer-events: none;
+    z-index: 1000;
+    display: none;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .seat-tooltip.show {
+    display: block;
+  }
 </style>
 
 <script>
@@ -158,6 +178,10 @@ document.addEventListener('DOMContentLoaded', function() {
   const locationInput = document.getElementById('location-input');
   const nameInput = document.getElementById('name-input');
   const form = document.querySelector('form');
+  const tooltip = document.getElementById('seat-tooltip');
+
+  // 既存の出社情報を取得
+  const existingAttendances = <%= raw @all_attendances.map { |a| { location: a.location, name: a.name } }.to_json %>;
 
   // 保存された名前を復元
   if (nameInput) {
@@ -291,6 +315,52 @@ document.addEventListener('DOMContentLoaded', function() {
     if (nearest) {
       locationInput.value = nearest.name;
       locationInput.focus();
+    }
+  });
+
+  // ホバー時にツールチップを表示
+  map.addEventListener('mousemove', function(e) {
+    if (!tooltip) return;
+
+    const rect = map.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    // マウス位置に該当するエリアを探す
+    let hoveredArea = null;
+    for (const area of areas) {
+      if (x >= area.x1 && x <= area.x2 && y >= area.y1 && y <= area.y2) {
+        hoveredArea = area;
+        break;
+      }
+    }
+
+    if (hoveredArea) {
+      // そのエリアに座っている人を探す
+      const occupant = existingAttendances.find(att => att.location === hoveredArea.name);
+
+      if (occupant) {
+        // ツールチップを表示
+        tooltip.textContent = `${hoveredArea.name}: ${occupant.name}`;
+        tooltip.classList.add('show');
+
+        // ツールチップの位置を調整（マウスカーソルの少し右下に表示）
+        const mapRect = map.getBoundingClientRect();
+        const areaMapRect = map.parentElement.getBoundingClientRect();
+        tooltip.style.left = (e.clientX - areaMapRect.left + 10) + 'px';
+        tooltip.style.top = (e.clientY - areaMapRect.top + 10) + 'px';
+      } else {
+        tooltip.classList.remove('show');
+      }
+    } else {
+      tooltip.classList.remove('show');
+    }
+  });
+
+  // マウスがマップから離れたらツールチップを非表示
+  map.addEventListener('mouseleave', function() {
+    if (tooltip) {
+      tooltip.classList.remove('show');
     }
   });
 });

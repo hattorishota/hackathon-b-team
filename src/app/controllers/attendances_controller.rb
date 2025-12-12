@@ -7,6 +7,7 @@ class AttendancesController < ApplicationController
 
   def new
     @attendance = Attendance.new
+    @all_attendances = Attendance.all
   end
 
   def create
@@ -19,6 +20,7 @@ class AttendancesController < ApplicationController
   end
 
   def edit
+    @all_attendances = Attendance.where.not(id: @attendance.id)
   end
 
   def update
