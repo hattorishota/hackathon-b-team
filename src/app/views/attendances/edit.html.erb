@@ -320,19 +320,19 @@ document.addEventListener('DOMContentLoaded', function() {
       // そのエリアに座っている人を探す
       const occupant = existingAttendances.find(att => att.location === hoveredArea.name);
 
+      // ツールチップを表示
       if (occupant) {
-        // ツールチップを表示
         tooltip.textContent = `${hoveredArea.name}: ${occupant.name}`;
-        tooltip.classList.add('show');
-
-        // ツールチップの位置を調整（マウスカーソルの少し右下に表示）
-        const mapRect = map.getBoundingClientRect();
-        const areaMapRect = map.parentElement.getBoundingClientRect();
-        tooltip.style.left = (e.clientX - areaMapRect.left + 10) + 'px';
-        tooltip.style.top = (e.clientY - areaMapRect.top + 10) + 'px';
       } else {
-        tooltip.classList.remove('show');
+        tooltip.textContent = `${hoveredArea.name}: 空席`;
       }
+      tooltip.classList.add('show');
+
+      // ツールチップの位置を調整（マウスカーソルの少し右下に表示）
+      const mapRect = map.getBoundingClientRect();
+      const areaMapRect = map.parentElement.getBoundingClientRect();
+      tooltip.style.left = (e.clientX - areaMapRect.left + 10) + 'px';
+      tooltip.style.top = (e.clientY - areaMapRect.top + 10) + 'px';
     } else {
       tooltip.classList.remove('show');
     }
