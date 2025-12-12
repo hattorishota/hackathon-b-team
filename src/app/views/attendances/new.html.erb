@@ -242,6 +242,36 @@ document.addEventListener('DOMContentLoaded', function() {
     { name: 'SEED 02', x1: 85, y1: 5, x2: 95, y2: 12 },
   ];
 
+  // エリアの中心点を計算
+  function getAreaCenter(area) {
+    return {
+      x: (area.x1 + area.x2) / 2,
+      y: (area.y1 + area.y2) / 2
+    };
+  }
+
+  // 2点間の距離を計算
+  function getDistance(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  }
+
+  // 最も近いエリアを見つける
+  function findNearestArea(x, y) {
+    let nearest = null;
+    let minDistance = Infinity;
+
+    for (const area of areas) {
+      const center = getAreaCenter(area);
+      const distance = getDistance(x, y, center.x, center.y);
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearest = area;
+      }
+    }
+
+    return nearest;
+  }
+
   map.addEventListener('click', function(e) {
     const rect = map.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -256,8 +286,12 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
 
-    // どのエリアにも該当しない場合は座標を表示（デバッグ用）
-    alert('エリアが特定できませんでした。位置を手動で入力してください。');
+    // どのエリアにも該当しない場合は最も近いエリアを入力
+    const nearest = findNearestArea(x, y);
+    if (nearest) {
+      locationInput.value = nearest.name;
+      locationInput.focus();
+    }
   });
 });
 </script>
