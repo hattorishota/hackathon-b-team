@@ -33,3 +33,61 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Ignore database files.
+*.sqlite3
+*.sqlite3-journal
+*.db
+
+# Ignore bootsnap cache.
+/tmp/bootsnap*
+
+# Ignore Sprockets cache.
+.sprockets-cache
+
+# Ignore node_modules (if using Node.js).
+/node_modules
+/yarn-error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore coverage reports.
+/coverage
+
+# Ignore byebug history.
+.byebug_history
+
+# Ignore environment variables (local overrides).
+.env.local
+.env.*.local
+
+# Ignore editor/IDE files.
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore OS files.
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Ignore Docker volumes and data.
+*.log
+docker-compose.override.yml
+
+# Ignore backup files.
+*.bak
+*.backup
+*~
