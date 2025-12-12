@@ -15,7 +15,7 @@
 
     <div class="form-group">
       <%= f.label :name, '名前' %>
-      <%= f.text_field :name, class: 'form-control', placeholder: '例: 山田太郎' %>
+      <%= f.text_field :name, class: 'form-control', placeholder: '例: 山田太郎', id: 'name-input' %>
     </div>
 
     <div class="form-group">
@@ -156,6 +156,25 @@
 document.addEventListener('DOMContentLoaded', function() {
   const map = document.getElementById('clickable-map');
   const locationInput = document.getElementById('location-input');
+  const nameInput = document.getElementById('name-input');
+  const form = document.querySelector('form');
+
+  // 保存された名前を復元
+  if (nameInput) {
+    const savedName = localStorage.getItem('attendance_name');
+    if (savedName && !nameInput.value) {
+      nameInput.value = savedName;
+    }
+  }
+
+  // フォーム送信時に名前を保存
+  if (form && nameInput) {
+    form.addEventListener('submit', function() {
+      if (nameInput.value) {
+        localStorage.setItem('attendance_name', nameInput.value);
+      }
+    });
+  }
 
   if (!map || !locationInput) return;
 
